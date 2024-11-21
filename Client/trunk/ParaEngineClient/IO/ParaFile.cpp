@@ -43,7 +43,7 @@ namespace ParaEngine
 		"xmodels/",	//APP_ARCHIVE_DIR, 
 		"model/",	//APP_MODEL_DIR,
 		"shaders/",	//APP_SHADER_DIR
-		"database/",//APP_DATABASE_DIR
+		"Database/",//APP_DATABASE_DIR
 		"temp/",	//APP_TEMP_DIR
 		"users/",	//APP_USER_DIR,
 		"_backup/",	//APP_BACKUP_DIR

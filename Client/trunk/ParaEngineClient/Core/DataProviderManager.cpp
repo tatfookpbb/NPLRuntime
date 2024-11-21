@@ -65,7 +65,7 @@ CKidsDBProvider* CDataProviderManager::GetKidsDBProvider()
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// load the default database
-		const char tempdb[] = "database/Kids.db";
+		const char tempdb[] = "Database/Kids.db";
 		SetKidsDBProvider(tempdb);
 		OUTPUT_LOG("default Kids game database is loaded from %s\r\n", tempdb);
 	}

@@ -721,7 +721,7 @@ HRESULT CParaEngineApp::Init(HWND* pHWND)
 	//m_pProvider->TestDB();
 
 	//// Old version:
-	//CGlobals::GetDataProviderManager()->SetKidsDBProvider("database/Kids.db");
+	//CGlobals::GetDataProviderManager()->SetKidsDBProvider("Database/Kids.db");
 	//m_pProvider->TestDB();
 #endif
 	return S_OK;

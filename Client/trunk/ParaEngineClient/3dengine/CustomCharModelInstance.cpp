@@ -136,7 +136,7 @@ ParaXEntity* CharModelInstance::GetAnimModel()
 		return NULL;
 }
 
-bool CharModelInstance::InitBaseModel(ParaXEntity * pModel)
+bool CharModelInstance::InitBaseModel(ParaXEntity* pModel)
 {
 	bool bSuc = true;
 	m_pModelCanvas->InitBaseModel(pModel);
@@ -148,7 +148,7 @@ bool CharModelInstance::InitBaseModel(ParaXEntity * pModel)
 	/** Set race and gender of the model. */
 	try {
 		const string& name = pModel->GetKey();
-		
+
 		if (name.find("CustomGeoset") != std::string::npos)
 			m_bHasCustomGeosets = true;
 		else
@@ -202,7 +202,7 @@ bool CharModelInstance::InitBaseModel(ParaXEntity * pModel)
 	if (m_bIsCustomModel == false)
 	{
 		/** this is not a fully customizable character model.*/
-		
+
 		/** a custom model is definitely not an automatic character model.*/
 		m_pModelCanvas->SetAutoCharacterModel(false);
 		// TODO: just for testing. Set the default skin.
@@ -228,7 +228,7 @@ void CharModelInstance::SetSkin(int nSkinIndex)
 	if (m_bIsCustomModel)
 		return;
 
-	ParaXEntity * pModelAsset = GetBaseModel();
+	ParaXEntity* pModelAsset = GetBaseModel();
 	if (pModelAsset == NULL)
 		return;
 	CParaXModel* pModel = pModelAsset->GetModel();
@@ -257,7 +257,7 @@ void CharModelInstance::SetSkin(int nSkinIndex)
 				if (nSkinIndex == 0)
 				{
 					// use the default. 
-					if(nTexId < NUM_TEX)
+					if (nTexId < NUM_TEX)
 						m_textures[nTexId] = pModel->textures[i];
 					m_skinIndex = nSkinIndex;
 				}
@@ -275,7 +275,7 @@ void CharModelInstance::SetSkin(int nSkinIndex)
 						sTextureFileName.replace(nSize - 4 - nNumberCount, nNumberCount, itoa(nSkinIndex, number, 10));
 						if (CParaFile::DoesFileExist(sTextureFileName.c_str(), true))
 						{
-							if(nTexId < NUM_TEX)
+							if (nTexId < NUM_TEX)
 								m_textures[nTexId] = CGlobals::GetAssetManager()->LoadTexture("", sTextureFileName.c_str(), TextureEntity::StaticTexture);
 							m_skinIndex = nSkinIndex;
 						}
@@ -296,7 +296,7 @@ void CharModelInstance::SetSkin(int nSkinIndex)
 			std::string fn;
 			CParaFile::ToCanonicalFilePath(fn, pModelAsset->GetFileName(), true);
 			int nLen = (int)fn.length();
-			if (fn[nLen - 2] == '.'&& fn[nLen - 1] == 'x'){
+			if (fn[nLen - 2] == '.' && fn[nLen - 1] == 'x') {
 				// for .x file. 
 				fn[nLen - 1] = 'm';
 				fn.append("dx");
@@ -322,11 +322,11 @@ void CharModelInstance::SetSkin(int nSkinIndex)
 			if (CCharacterDB::GetInstance().GetReplaceTexturesByModelIDAndSkinID(modelid, nSkinIndex, grp.tex[0], grp.tex[1], grp.tex[2], bFound))
 			{
 				if (!grp.tex[0].empty())
-					++ (grp.count);
+					++(grp.count);
 				if (!grp.tex[1].empty())
-					++ (grp.count);
+					++(grp.count);
 				if (!grp.tex[2].empty())
-					++ (grp.count);
+					++(grp.count);
 			}
 		}
 		catch (...) {
@@ -344,7 +344,7 @@ void CharModelInstance::SetSkin(int nSkinIndex)
 			if (pModel->useReplaceTextures[grp.base + i]) {
 				TextureEntity* def = CGlobals::GetAssetManager()->LoadTexture("", makeSkinTexture(pModelAsset->GetFileName().c_str(), grp.tex[i].c_str()).c_str(), TextureEntity::StaticTexture);
 				int nTexId = pModel->specialTextures[i];
-				if(nTexId >= 0 && nTexId < NUM_TEX)
+				if (nTexId >= 0 && nTexId < NUM_TEX)
 					m_textures[nTexId] = def;
 			}
 		}
@@ -359,10 +359,10 @@ void CharModelInstance::SetUpperBodyTurningAngle(float fAngle)
 {
 	if (m_fUpperBodyTurningAngle != fAngle)
 	{
-		if (fAngle > MATH_PI*0.5f)
-			fAngle = MATH_PI*0.5f;
-		if (fAngle< -MATH_PI*0.5f)
-			fAngle = -MATH_PI*0.5f;
+		if (fAngle > MATH_PI * 0.5f)
+			fAngle = MATH_PI * 0.5f;
+		if (fAngle < -MATH_PI * 0.5f)
+			fAngle = -MATH_PI * 0.5f;
 
 		m_fUpperBodyTurningAngle = fAngle;
 	}
@@ -373,10 +373,10 @@ void CharModelInstance::SetUpperBodyUpdownAngle(float fUpDownAngle)
 {
 	if (fUpDownAngle != m_fUpperBodyUpDownAngle)
 	{
-		if (fUpDownAngle> MATH_PI*0.5f)
-			fUpDownAngle = MATH_PI*0.5f;
-		if (fUpDownAngle < -MATH_PI*0.5f)
-			fUpDownAngle = -MATH_PI*0.5f;
+		if (fUpDownAngle > MATH_PI * 0.5f)
+			fUpDownAngle = MATH_PI * 0.5f;
+		if (fUpDownAngle < -MATH_PI * 0.5f)
+			fUpDownAngle = -MATH_PI * 0.5f;
 		m_fUpperBodyUpDownAngle = fUpDownAngle;
 	}
 }
@@ -448,7 +448,7 @@ void CharModelInstance::UpdateGeosetsToModel(CParaXModel* pModel)
 		{
 			// show all geoset whose id ==0, there may be multiple such geosets.
 			pModel->showGeosets[j] = true;
-			
+
 		}
 	}
 
@@ -480,14 +480,14 @@ void CharModelInstance::UpdateTexturesToModel(CParaXModel* pModel)
 		if (!mReplaceableTexturesCache.empty())
 		{
 			auto mReplaceableTextures_ = mReplaceableTexturesCache;
-			for (auto & replaceable_texture_pair : mReplaceableTextures_)
+			for (auto& replaceable_texture_pair : mReplaceableTextures_)
 			{
 				SetReplaceableTexture(replaceable_texture_pair.first, replaceable_texture_pair.second.get());
 				replaceable_texture_pair.second.reset();
 			}
 			mReplaceableTexturesCache.clear();
 		}
-		
+
 		for (int i = 0, k = 0; i < CParaXModel::MAX_MODEL_TEXTURES; ++i)
 		{
 			int nIndex = pModel->specialTextures[i];
@@ -503,9 +503,9 @@ void CharModelInstance::UpdateTexturesToModel(CParaXModel* pModel)
 	}
 }
 
-bool CharModelInstance::AnimateModel(SceneState * sceneState, const AnimIndex& CurrentAnim, const AnimIndex& NextAnim, const AnimIndex& BlendingAnim, float blendingFactor, const AnimIndex & upperAnim, const AnimIndex & upperBlendingAnim, float upperBlendingFactor, IAttributeFields* pAnimInstance)
+bool CharModelInstance::AnimateModel(SceneState* sceneState, const AnimIndex& CurrentAnim, const AnimIndex& NextAnim, const AnimIndex& BlendingAnim, float blendingFactor, const AnimIndex& upperAnim, const AnimIndex& upperBlendingAnim, float upperBlendingFactor, IAttributeFields* pAnimInstance)
 {
-	ParaXEntity * pModelAsset = GetBaseModel();
+	ParaXEntity* pModelAsset = GetBaseModel();
 	if (pModelAsset == NULL)
 		return false;
 	int nIndex = (sceneState && sceneState->IsLODEnabled()) ? pModelAsset->GetLodIndex(sceneState->GetCameraToCurObjectDistance()) : 0;
@@ -513,7 +513,7 @@ bool CharModelInstance::AnimateModel(SceneState * sceneState, const AnimIndex& C
 
 	if (pModel == NULL)
 		return false;
-	
+
 	//-------------------------------------------------
 	if (!pModel->HasAnimation())
 	{
@@ -560,13 +560,13 @@ bool CharModelInstance::AnimateModel(SceneState * sceneState, const AnimIndex& C
 	return bRes;
 }
 
-void CharModelInstance::BuildShadowVolume(SceneState * sceneState, ShadowVolume * pShadowVolume, LightParams* pLight, Matrix4* mxWorld)
+void CharModelInstance::BuildShadowVolume(SceneState* sceneState, ShadowVolume* pShadowVolume, LightParams* pLight, Matrix4* mxWorld)
 {
 	if (m_pModelCanvas)
 		m_pModelCanvas->BuildShadowVolume(sceneState, pShadowVolume, pLight, mxWorld);
 }
 
-void CharModelInstance::Draw(SceneState * sceneState, CParameterBlock* materialParams)
+void CharModelInstance::Draw(SceneState* sceneState, CParameterBlock* materialParams)
 {
 	// draw model
 	if (m_pModelCanvas)
@@ -697,7 +697,7 @@ void CharModelInstance::RefreshModel_imp()
 	else
 	{
 		// this is head, the index begins by 1 instead of 0.
-		geosets[CSET_FACIAL_HAIR3] ++;
+		geosets[CSET_FACIAL_HAIR3]++;
 	}
 
 	/**
@@ -721,7 +721,7 @@ void CharModelInstance::RefreshModel_imp()
 	hadRobe = false;
 	for (int i = 0; i < NUM_CHAR_SLOTS; i++)
 	{
-		int sn = CCharCustomizeSysSetting::GetSlotOrder(i, hadRobe);
+		int sn = CCharCustomizeSysSetting::GetSingleton().GetSlotOrder(i, hadRobe);
 		if (equipment[sn] != 0)
 			UpdateBaseModelByEquipment(sn, equipment[sn], 10 + i, tex);
 	}
@@ -730,7 +730,7 @@ void CharModelInstance::RefreshModel_imp()
 
 	// regenerate cartoon face texture, if and only if the user has used it at least once.
 	// here we will regenerate if the head is not the default geoset.
-	if (geosets[CSET_FACIAL_HAIR3]>1)
+	if (geosets[CSET_FACIAL_HAIR3] > 1)
 	{
 		if (m_cartoonFace == 0)
 		{
@@ -751,7 +751,7 @@ void CharModelInstance::RefreshModel_imp()
 	}
 }
 
-void CharModelInstance::UpdateBaseModelByEquipment(int slot, int itemid, int layer, CharTexture &tex)
+void CharModelInstance::UpdateBaseModelByEquipment(int slot, int itemid, int layer, CharTexture& tex)
 {
 	if (!m_bIsCustomModel)
 		return;
@@ -819,7 +819,7 @@ void CharModelInstance::UpdateBaseModelByEquipment(int slot, int itemid, int lay
 		if (nItemType == IT_CAPE) {
 			geosets[CSET_CAPE] = 1 + GeosetA;
 			// load the cape texture
-			const char *tex = skin.c_str();
+			const char* tex = skin.c_str();
 			if (skin.length() > 0)
 				m_textures[CAPE_TEX] = CGlobals::GetAssetManager()->LoadTexture("", makeItemTexture(CR_CAPE, tex).c_str(), TextureEntity::StaticTexture);
 		}
@@ -838,7 +838,7 @@ void CharModelInstance::UpdateBaseModelByEquipment(int slot, int itemid, int lay
 		if (nItemType == IT_ARIES_CHAR_WING) {
 			geosets[CSET_WINGS] = 1 + GeosetA;
 			// load the wing texture
-			const char *tex = skin.c_str();
+			const char* tex = skin.c_str();
 			if (skin.length() > 0)
 				m_textures[WING_TEX] = CGlobals::GetAssetManager()->LoadTexture("", makeItemTexture(CR_ARIES_CHAR_WING, tex).c_str(), TextureEntity::StaticTexture);
 		}
@@ -858,35 +858,35 @@ void CharModelInstance::UpdateBaseModelByEquipment(int slot, int itemid, int lay
 			}
 			if (flags == 1) { // set item use mask item
 
-				if (GeosetD >= 0){
+				if (GeosetD >= 0) {
 					showAriesGlassByItem = false;
 					geosets[CSET_FACIAL_HAIR2] = GeosetD; // show or hide the character glasses geometry set according to the GeosetD, if 0 hide
 				}
 				else
 					showAriesGlassByItem = true;
 
-				if (GeosetE >= 0){
+				if (GeosetE >= 0) {
 					showAriesPantByItem = false;
 					geosets[CSET_PANTS] = GeosetE; // show or hide the character pants geometry set according to the GeosetE, if 0 hide
 				}
 				else
 					showAriesPantByItem = true;
 
-				if (GeosetVisID1 >= 0){
+				if (GeosetVisID1 >= 0) {
 					showAriesHandByItem = false;
 					geosets[CSET_GLOVES] = GeosetVisID1; // show or hide the character gloves geometry set according to the GeosetVisID1, if 0 hide
 				}
 				else
 					showAriesHandByItem = true;
 
-				if (GeosetVisID2 >= 0){
+				if (GeosetVisID2 >= 0) {
 					showAriesFootByItem = false;
 					geosets[CSET_BOOTS] = GeosetVisID2; // show or hide the character foot geometry set according to the GeosetVisID2, if 0 hide
 				}
 				else
 					showAriesFootByItem = true;
 			}
-			else{
+			else {
 				showAriesGlassByItem = true;
 				showAriesPantByItem = true;
 				showAriesHandByItem = true;
@@ -1096,8 +1096,8 @@ void CharModelInstance::RefreshItem(int slot)
 		{
 			string modelpath;
 			bool succ = false;
-			CanvasAttachment *att = NULL;
-			union{
+			CanvasAttachment* att = NULL;
+			union {
 				MeshEntity* AttachedModel;
 				ParaXEntity* AttachedParaXModel;
 			};
@@ -1128,10 +1128,10 @@ void CharModelInstance::RefreshItem(int slot)
 
 					if (AttachedModel != 0 && (bIsStaticMeshModel ? AttachedModel->IsValid() : AttachedParaXModel->IsValid()))
 					{
-						if (bIsStaticMeshModel){
+						if (bIsStaticMeshModel) {
 							att = m_pModelCanvas->addAttachment(AttachedModel, id1, slot, sc);
 						}
-						else{
+						else {
 							att = m_pModelCanvas->addAttachment(AttachedParaXModel, id1, slot, sc);
 						}
 
@@ -1165,10 +1165,10 @@ void CharModelInstance::RefreshItem(int slot)
 
 					if (AttachedModel != 0 && (bIsStaticMeshModel ? AttachedModel->IsValid() : AttachedParaXModel->IsValid()))
 					{
-						if (bIsStaticMeshModel){
+						if (bIsStaticMeshModel) {
 							att = m_pModelCanvas->addAttachment(AttachedModel, id2, slot, sc);
 						}
-						else{
+						else {
 							att = m_pModelCanvas->addAttachment(AttachedParaXModel, id2, slot, sc);
 						}
 
@@ -1192,14 +1192,14 @@ void CharModelInstance::RefreshItem(int slot)
 				if (visualid > 0) {
 					try {
 						ItemVisualDB::Record vis = visualdb.getById(visualid);
-						for (int i = 0; i<5; i++) {
+						for (int i = 0; i < 5; i++) {
 							// try all five visual slots
 							int effectid = vis.getInt(ItemVisualDB::Effect1 + i);
 							if (effectid == 0) continue;
 
 							try {
 								ItemVisualEffectDB::Record eff = effectdb.getById(effectid);
-								const char *filename = eff.getString(ItemVisualEffectDB::Model);
+								const char* filename = eff.getString(ItemVisualEffectDB::Model);
 
 								att->addChild(filename, i, -1);
 
@@ -1348,7 +1348,7 @@ void CharModelInstance::adjustHairVisibility()
 {
 }
 
-std::string CharModelInstance::makeItemTexture(int region, const char *name)
+std::string CharModelInstance::makeItemTexture(int region, const char* name)
 {
 	// just return an empty filename
 	if (name == 0 || name[0] == '\0')
@@ -1359,7 +1359,7 @@ std::string CharModelInstance::makeItemTexture(int region, const char *name)
 	if (sName.find_last_of('/') == std::string::npos)
 	{
 		// if it does not contain a parent path, region is used
-		std::string fullname = CCharCustomizeSysSetting::GetRegionPath(region);
+		std::string fullname = CCharCustomizeSysSetting::GetSingleton().GetRegionPathByMainAsset(region, GetBaseModel()->GetFileName());
 		fullname += sName;
 		if (CParaFile::GetFileExtension(sName) == "")
 		{
@@ -1410,7 +1410,7 @@ std::string CharModelInstance::makeItemTexture(int region, const char *name)
 	}
 }
 
-std::string CharModelInstance::makeItemModel(int region, const char *name)
+std::string CharModelInstance::makeItemModel(int region, const char* name)
 {
 	// just return an empty filename
 	if (name == 0 || name[0] == '\0')
@@ -1421,7 +1421,7 @@ std::string CharModelInstance::makeItemModel(int region, const char *name)
 	if (sName.find_last_of('/') == std::string::npos)
 	{
 		// if it does not contain a parent path, region is used
-		std::string fullname = CCharCustomizeSysSetting::GetRegionPath(region);
+		std::string fullname = CCharCustomizeSysSetting::GetSingleton().GetRegionPathByMainAsset(region, GetBaseModel()->GetFileName());
 		fullname += sName;
 		if (CParaFile::GetFileExtension(sName) == "")
 		{
@@ -1470,7 +1470,7 @@ std::string CharModelInstance::makeItemModel(int region, const char *name)
 		return sName;
 	}
 }
-std::string CharModelInstance::makeSkinTexture(const char *texfn, const char *skin)
+std::string CharModelInstance::makeSkinTexture(const char* texfn, const char* skin)
 {
 	std::string res = texfn;
 	size_t i = res.find_last_of('/');
@@ -1599,7 +1599,7 @@ void CharModelInstance::AddAttachment(ParaXEntity* pModelEntity, int nAttachment
 	}
 }
 
-IAttributeFields * CharModelInstance::GetAttachmentAttObj(int nAttachmentID)
+IAttributeFields* CharModelInstance::GetAttachmentAttObj(int nAttachmentID)
 {
 	CanvasAttachment* pAtt = m_pModelCanvas->GetChild(nAttachmentID);
 	if (pAtt)
@@ -1609,10 +1609,10 @@ IAttributeFields * CharModelInstance::GetAttachmentAttObj(int nAttachmentID)
 	return NULL;
 }
 
-CParameterBlock * ParaEngine::CharModelInstance::GetAttachmentParamBlock(int attachmentID,int slotID)
+CParameterBlock* ParaEngine::CharModelInstance::GetAttachmentParamBlock(int attachmentID, int slotID)
 {
-	CanvasAttachment* pAtt=m_pModelCanvas->GetChild(attachmentID,slotID);
-	if(pAtt)
+	CanvasAttachment* pAtt = m_pModelCanvas->GetChild(attachmentID, slotID);
+	if (pAtt)
 	{
 		return pAtt->GetParamBlock(true);
 	}
@@ -1906,7 +1906,7 @@ int CharModelInstance::GetBodyParams(int type)
 	}
 }
 
-IAttributeFields* CharModelInstance::GetChildAttributeObject(const char * sName)
+IAttributeFields* CharModelInstance::GetChildAttributeObject(const char* sName)
 {
 	return m_pModelCanvas.get();
 }

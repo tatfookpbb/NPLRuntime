@@ -953,6 +953,8 @@ namespace ParaEngine
 		/** if any child is also dirty. */
 		bool IsDirtyRecursive();
 		void SetDirty(bool val);
+		void SetDirtyRecursive(bool val);
+
 
 		/**
 		* return true if it is scrollable.
@@ -1029,6 +1031,9 @@ namespace ParaEngine
 		{
 			return ((m_touchTranslateAttFlag & attFlags) == attFlags);
 		}
+
+		void SetMouseOver(bool bMouseOver);
+		bool IsMouseOver()const{ return m_bMouseOver; }
 
 	protected:
 		/**

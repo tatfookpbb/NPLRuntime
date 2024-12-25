@@ -848,6 +848,7 @@ namespace ParaEngine
 		* @param fDeltaTime: time elapsed since last frame move.
 		*/
 		virtual bool		OnFrameMove(float fDeltaTime);
+		bool		OnFrameMoveRecursive(float fDeltaTime);
 
 		/**
 		* Default OnClick event handler. It activates corresponding scripts.

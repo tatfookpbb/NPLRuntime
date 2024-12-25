@@ -528,6 +528,7 @@ void CGUIEditBox::PlaceCaret(int nCP)
 	}
 
 	m_nCaret = nCP;
+	SetDirty(true);
 	if (m_parent == 0)
 	{
 		// By LiXizhi, 2007.9.25

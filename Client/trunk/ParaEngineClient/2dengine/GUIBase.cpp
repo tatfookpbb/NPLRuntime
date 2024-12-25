@@ -686,6 +686,7 @@ void CGUIBase::SetVisible(bool visible)
 	//if the control is on the edge of the parent, need to recalculate childrect
 	if (m_bNeedUpdate)
 	{
+		SetDirty(true);
 		if (m_parent)
 		{
 			m_parent->SetDirty(true);
@@ -1166,6 +1167,25 @@ bool CGUIBase::OnFrameMove(float fDeltaTime)
 	return true;
 }
 
+bool ParaEngine::CGUIBase::OnFrameMoveRecursive(float fDeltaTime)
+{
+	if (fDeltaTime > 0.001f)
+	{
+		bool bResult = OnFrameMove(fDeltaTime);
+		auto pChildren = GetChildren();
+		if (pChildren)
+		{
+			for (auto& child : *pChildren)
+			{
+				if (child->GetVisible())
+					child->OnFrameMoveRecursive(fDeltaTime);
+			}
+		}
+		return bResult;
+	}
+	return true;
+}
+
 bool CGUIBase::OnChange(const char* code)
 {
 	if (!HasEvent(EM_CTRL_CHANGE))
@@ -1274,8 +1294,8 @@ bool CGUIBase::MsgProc(MSG* event)
 		return false;
 	bool bHandled = false;
 	CGUIRoot* pRoot = CGUIRoot::GetInstance();
-	CDirectMouse* pMouse = pRoot->m_pMouse;
-	CDirectKeyboard* pKeyboard = pRoot->m_pKeyboard;
+	auto pMouse = pRoot->m_pMouse;
+	auto pKeyboard = pRoot->m_pKeyboard;
 	STRUCT_DRAG_AND_DROP* pdrag = &IObjectDrag::DraggingObject;
 	MSG newMsg;
 	if (event != NULL && !m_event->InterpretMessage(event)) {
@@ -1323,9 +1343,11 @@ bool CGUIBase::MsgProc(MSG* event)
 			bHandled = OnSelect();
 		}
 		else if (m_event->IsMapTo(nEvent, EM_CTRL_CHANGE)) {
+			SetDirty(true);
 			bHandled = OnChange();
 		}
 		else if (m_event->IsMapTo(nEvent, EM_CTRL_MODIFY)) {
+			SetDirty(true);
 			bHandled = OnModify();
 		}
 		else if (m_event->IsMapTo(nEvent, EM_MOUSE_WHEEL)) {
@@ -1558,7 +1580,7 @@ void CGUIBase::Begin(GUIState* pGUIState, float fElapsedTime)
 	if (m_bNeedUpdate) {
 		UpdateRects();
 	}
-	CDirectMouse* pMouse = CGUIRoot::GetInstance()->m_pMouse;
+	auto pMouse = CGUIRoot::GetInstance()->m_pMouse;
 	POINT pt;
 	pt.x = pMouse->m_x;
 	pt.y = pMouse->m_y;
@@ -1644,19 +1666,25 @@ BOOL CGUIBase::IsPointInControl(int x, int y)
 	return ((pos.rect.left <= x && pos.rect.top <= y && pos.rect.right >= x && pos.rect.bottom >= y));
 }
 
-float	CGUIBase::GetRotation()
+float CGUIBase::GetRotation()
 {
 	return m_fRotation;
 }
-void	CGUIBase::SetRotation(float fRot)
+void CGUIBase::SetRotation(float fRot)
 {
-	m_fRotation = fRot;
-	SetDirty(true);
+	if (fRot != m_fRotation)
+	{
+		m_fRotation = fRot;
+		SetDirty(true);
+	}
 }
 void CGUIBase::SetRotOriginOffset(const Vector2& in)
 {
-	m_vRotOriginOffset = in;
-	SetDirty(true);
+	if (m_vRotOriginOffset != in)
+	{
+		m_vRotOriginOffset = in;
+		SetDirty(true);
+	}
 }
 
 void CGUIBase::GetRotOriginOffset(Vector2* pOut)
@@ -1666,8 +1694,11 @@ void CGUIBase::GetRotOriginOffset(Vector2* pOut)
 }
 void ParaEngine::CGUIBase::SetScaling(const Vector2& in)
 {
-	m_vScaling = in;
-	SetDirty(true);
+	if (m_vScaling != in)
+	{
+		m_vScaling = in;
+		SetDirty(true);
+	}
 }
 
 void ParaEngine::CGUIBase::GetScaling(Vector2* pOut)
@@ -1678,8 +1709,11 @@ void ParaEngine::CGUIBase::GetScaling(Vector2* pOut)
 
 void ParaEngine::CGUIBase::SetTranslation(const Vector2& in)
 {
-	m_vTranslation = in;
-	SetDirty(true);
+	if (m_vTranslation != in)
+	{
+		m_vTranslation = in;
+		SetDirty(true);
+	}
 }
 
 void ParaEngine::CGUIBase::GetTranslation(Vector2* pOut)
@@ -1690,8 +1724,11 @@ void ParaEngine::CGUIBase::GetTranslation(Vector2* pOut)
 
 void ParaEngine::CGUIBase::SetColorMask(DWORD dwColor)
 {
-	m_dwColorMask = dwColor;
-	SetDirty(true);
+	if (m_dwColorMask != dwColor) 
+	{
+		m_dwColorMask = dwColor;
+		SetDirty(true);
+	}
 }
 
 DWORD ParaEngine::CGUIBase::GetColorMask()
@@ -2115,7 +2152,7 @@ int ParaEngine::CGUIBase::GetChildCount()
 
 bool ParaEngine::CGUIBase::HasClickEvent()
 {
-	return HasEvent(EM_MOUSE_CLICK);
+	return HasEvent(EM_MOUSE_CLICK) || HasEvent(EM_MOUSE_DOWN) || HasEvent(EM_MOUSE_UP);
 }
 
 bool ParaEngine::CGUIBase::IsAncestorOf(CGUIBase* pChild)
@@ -2354,14 +2391,20 @@ bool ParaEngine::CGUIBase::IsScrollable()
 
 bool ParaEngine::CGUIBase::IsScrollableOrHasMouseWheelRecursive()
 {
+	bool bCanDrag = false;
 	bool bScrollable = IsScrollable() || HasEvent(EM_MOUSE_WHEEL);
+	if (!bScrollable)
+		bCanDrag = bCanDrag || GetCandrag();
+
 	CGUIContainer* temp = GetParent();
 	while (!bScrollable && temp != NULL)
 	{
 		bScrollable = temp->IsScrollable() || temp->HasEvent(EM_MOUSE_WHEEL);
+		if (!bScrollable)
+			bCanDrag = bCanDrag || GetCandrag();
 		temp = temp->GetParent();
 	}
-	return bScrollable;
+	return (bScrollable && !bCanDrag);
 }
 
 CPaintEngine* ParaEngine::CGUIBase::paintEngine() const
@@ -2413,7 +2456,7 @@ HRESULT ParaEngine::CGUIBase::DoRender(GUIState* pGUIState, float fElapsedTime)
 				}
 				else
 				{
-					OnFrameMove(fElapsedTime);
+					OnFrameMoveRecursive(fElapsedTime);
 				}
 				// copy render target to back buffer. 
 				{
@@ -2456,7 +2499,6 @@ HRESULT ParaEngine::CGUIBase::DoSelfPaint(GUIState* pGUIState, float fElapsedTim
 		{
 			if (pRenderTarget->IsDirty() || IsDirtyRecursive())
 			{
-				SetDirtyRecursive(false);
 				pRenderTarget->SetDirty(false);
 
 				if (pRenderTarget->GetPrimaryAsset())
@@ -2493,6 +2535,7 @@ HRESULT ParaEngine::CGUIBase::DoSelfPaint(GUIState* pGUIState, float fElapsedTim
 								pDevice->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, FALSE);
 							}
 
+							SetDirtyRecursive(false);
 							if (painter.GetPendingAssetCount() > 0)
 							{
 								SetDirty(true);
@@ -2727,7 +2770,7 @@ int ParaEngine::CGUIBase::OnHandleWinMsgChars(const std::wstring& sChars)
 
 void ParaEngine::CGUIBase::SendInputMethodEvent(const std::wstring& sText)
 {
-	if (!sText.empty())
+	if (!sText.empty() && HasEvent(EM_WM_INPUT_METHOD))
 	{
 		u16string sTextWide;
 		sTextWide.resize(sText.size());
@@ -2738,13 +2781,10 @@ void ParaEngine::CGUIBase::SendInputMethodEvent(const std::wstring& sText)
 		string sTextUTF8;
 		if (StringHelper::UTF16ToUTF8(sTextWide, sTextUTF8))
 		{
-			if (HasEvent(EM_WM_INPUT_METHOD))
-			{
-				string sOutput;
-				NPL::NPLHelper::EncodeStringInQuotation(sOutput, 0, sTextUTF8);
-				sOutput = string("msg=") + sOutput + ";";
-				ActivateScript(sOutput, EM_WM_INPUT_METHOD);
-			}
+			string sOutput;
+			NPL::NPLHelper::EncodeStringInQuotation(sOutput, 0, sTextUTF8);
+			sOutput = string("msg=") + sOutput + ";";
+			ActivateScript(sOutput, EM_WM_INPUT_METHOD);
 		}
 	}
 }

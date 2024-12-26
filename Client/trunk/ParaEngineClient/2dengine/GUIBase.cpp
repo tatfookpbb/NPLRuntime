@@ -2527,6 +2527,7 @@ HRESULT ParaEngine::CGUIBase::DoSelfPaint(GUIState* pGUIState, float fElapsedTim
 								pDevice->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
 								pDevice->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
 								pDevice->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+								pDevice->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_MAX);
 
 								pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 								pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);

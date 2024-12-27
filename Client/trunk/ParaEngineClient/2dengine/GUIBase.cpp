@@ -2507,6 +2507,9 @@ HRESULT ParaEngine::CGUIBase::DoSelfPaint(GUIState* pGUIState, float fElapsedTim
 					{
 						// change the paint device. 
 						auto pLastPainter = pGUIState->painter;
+						// fixed self-paint GUI in rotate screen, set render target so that we are not rendering to rotated screen.
+						auto pLastRenderTarget = CGlobals::GetViewportManager()->GetActiveViewPort()->GetRenderTarget();
+						CGlobals::GetViewportManager()->GetActiveViewPort()->SetRenderTarget(pRenderTarget);
 						{
 							CPainter painter(pRenderTarget);
 							pGUIState->painter = &painter;
@@ -2561,6 +2564,7 @@ HRESULT ParaEngine::CGUIBase::DoSelfPaint(GUIState* pGUIState, float fElapsedTim
 						}
 						pRenderTarget->End();
 						pGUIState->painter = pLastPainter;
+						CGlobals::GetViewportManager()->GetActiveViewPort()->SetRenderTarget(pLastRenderTarget);
 					}
 				}
 			}
